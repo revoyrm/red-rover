@@ -4,11 +4,9 @@ import { NextPageContext } from "next";
 import axios from "axios";
 import { Rover } from "@/src/components/types/rover";
 import { RoverCard } from "@/src/components/RoverCard";
+import { DEMO_KEY, MARS_BASE_URI } from "@/src/components/constants";
 
 const inter = Inter({ subsets: ["latin"] });
-
-export const DEMO_KEY = "DEMO_KEY";
-export const MARS_BASE_URI = "https://api.nasa.gov/mars-photos/api/v1/rovers/";
 
 type HomeProps = {
   rovers: Rover[];
@@ -36,9 +34,13 @@ export async function getServerSideProps(context: NextPageContext): Promise<{
   props: HomeProps;
 }> {
   try {
-    const { data } = await axios.get<RoverResponse>(MARS_BASE_URI, {
-      params: { api_key: DEMO_KEY },
-    });
+    console.log("in getserversideprops", { MARS_BASE_URI });
+    const { data } = await axios.get<RoverResponse>(
+      "https://api.nasa.gov/mars-photos/api/v1/rovers/",
+      {
+        params: { api_key: DEMO_KEY },
+      }
+    );
 
     return {
       props: {
