@@ -7,6 +7,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
 import { TextField } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 type RoverDetailProps = {
   roverName?: string;
@@ -26,7 +28,6 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
-    console.log("HERE HERE");
     const getPhotos = async () => {
       const { data } = await axios.post("/api/getPhotosByDate", {
         roverName,
@@ -37,7 +38,9 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
       console.log(data);
     };
 
-    // getPhotos();
+    if (date?.isValid()) {
+      getPhotos();
+    }
   }, [date, roverName]);
 
   return {
@@ -46,41 +49,32 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
     setDate,
   };
 };
-const color = "#c44242";
+
 export default function RoverDetail({ roverName }: RoverDetailProps) {
   const { date, photos, setDate } = useRoverPhotos(roverName ?? "");
   return (
-    <div>
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-white text-black">
       <div>{roverName}</div>
       <div>
         <p>Date:</p>
-        <DatePicker
-          label="Photo Date"
-          renderInput={(params) => {
-            return (
-              <TextField
-                {...params}
-                sx={{
-                  svg: { color },
-                  input: { color },
-                  label: { color },
-                }}
-              />
-            );
-          }}
-          value={date}
-          onAccept={(newValue) => {
-            console.log(newValue);
-            setDate(newValue);
-          }}
-        />
+
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            label="Photo Date"
+            value={date}
+            onChange={(newValue) => {
+              console.log({ newValue, isValid: newValue?.isValid() });
+              setDate(newValue);
+            }}
+          />
+        </LocalizationProvider>
       </div>
       <div className="grid grid-cols-3 gap-x-4 gap-y-8">
         {photos.map((photo) => (
           <img key={photo.id} alt={`image ${photo.sol}`} src={photo.img_src} />
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 

@@ -15,7 +15,7 @@ type HomeProps = {
 export default function Home({ rovers }: HomeProps) {
   return (
     <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
+      className={`flex min-h-screen flex-col items-center justify-between p-24 bg-white text-black ${inter.className}`}
     >
       <ul className="grid grid-cols-3 gap-x-2 gap-y-8 w-full p-8">
         {rovers.map((rover) => (
