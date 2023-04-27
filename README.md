@@ -6,8 +6,9 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-npm i
-npm run start
+`npm i`
+
+`npm run start`
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
