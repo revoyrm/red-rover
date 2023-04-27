@@ -28,7 +28,7 @@ export function RoverCard({
   const Router = useRouter();
 
   const launchRover = useCallback(() => {
-    // Router.push(`/${name}`);
+    Router.push(`/${name}`);
   }, [Router, name]);
 
   return (

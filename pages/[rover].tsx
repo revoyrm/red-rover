@@ -1,13 +1,11 @@
 import { NextPageContext } from "next";
 import axios from "axios";
 import Image from "next/image";
-import { Photo, Rover } from "@/src/components/types/rover";
-import { RoverCard } from "@/src/components/RoverCard";
+import { Photo } from "@/src/components/types/rover";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import dayjs from "dayjs";
-import { TextField } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -23,9 +21,7 @@ type useRoverPhotosReturn = {
 
 const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
-  // new Date(Date.now()).toISOString().slice(0, 10)
 
-  console.log({ date: date?.format("YYYY-MM-DD") });
   const [photos, setPhotos] = useState([]);
 
   useEffect(() => {
@@ -36,7 +32,6 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
       });
 
       setPhotos(data.photos);
-      console.log(data);
     };
 
     if (date?.isValid()) {
@@ -54,31 +49,31 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
 export default function RoverDetail({ roverName }: RoverDetailProps) {
   const { date, photos, setDate } = useRoverPhotos(roverName ?? "");
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24 bg-white text-black">
-      <div>{roverName}</div>
-      <div>
-        <p>Date:</p>
-
+    <main className="flex h-full w-full flex-col justify-between pb-32 overflow-y-scroll bg-gray-100 text-red-900">
+      <div className="flex justify-between w-full p-8 h-24">
+        <h1 className="font-bold text-2xl pr-8">{roverName}</h1>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
-            label="Photo Date"
+            label="Date of Photos"
             value={date}
-            onChange={(newValue) => {
+            onAccept={(newValue) => {
               console.log({ newValue, isValid: newValue?.isValid() });
               setDate(newValue);
             }}
           />
         </LocalizationProvider>
       </div>
-      <div className="grid grid-cols-3 gap-x-4 gap-y-8">
-        {photos.map((photo) => (
-          <Image
-            key={photo.id}
-            alt={`image ${photo.sol}`}
-            src={photo.img_src}
-          />
-        ))}
-      </div>
+      {!photos.length && (
+        <div className="flex justify-around">No Photos for this date</div>
+      )}
+      {photos.length && (
+        <div className="grid grid-cols-3 gap-x-4 gap-y-8 content-center">
+          {photos.map((photo) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img key={photo.id} alt={`image ${photo.id}`} src={photo.img_src} />
+          ))}
+        </div>
+      )}
     </main>
   );
 }

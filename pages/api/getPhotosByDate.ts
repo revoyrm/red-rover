@@ -13,15 +13,17 @@ export default async function handler(
 ) {
   const { roverName, date } = req.body;
 
-  console.log({ roverName, date });
-  const { data } = await axios.get<PhotosResponse>(
-    `${MARS_BASE_URI}/${roverName}/photos/`,
-    {
-      params: { earth_date: date, api_key: DEMO_KEY },
-    }
-  );
+  try {
+    const { data } = await axios.get<PhotosResponse>(
+      `${MARS_BASE_URI}/${roverName}/photos/`,
+      {
+        params: { earth_date: date, api_key: DEMO_KEY },
+      }
+    );
 
-  console.log({ data });
-
-  res.status(200).json(data);
+    res.status(200).json(data);
+  } catch (e) {
+    console.error(e);
+    res.status(500).json({ photos: [] });
+  }
 }

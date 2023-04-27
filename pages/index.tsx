@@ -10,7 +10,7 @@ type HomeProps = {
 
 export default function Home({ rovers }: HomeProps) {
   return (
-    <main className="flex h-full flex-col justify-between px-24 py-8 bg-gray-100 text-black">
+    <main className="flex h-full overflow-y-scroll flex-col justify-between px-24 py-8 pb-36 content-center bg-gray-100 text-black">
       <ul className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-x-4 gap-y-8 w-full p-8">
         {rovers.map((rover) => (
           <RoverCard key={rover.id} {...rover} />
