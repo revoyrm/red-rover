@@ -1,6 +1,7 @@
 import { NextPageContext } from "next";
 import axios from "axios";
-import Image from "next/image";
+import MoonLoader from "react-spinners/MoonLoader";
+
 import { Photo } from "@/src/components/types/rover";
 
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -19,7 +20,10 @@ type useRoverPhotosReturn = {
   setDate: Dispatch<SetStateAction<dayjs.Dayjs | null>>;
 };
 
-const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
+const useRoverPhotos = (
+  roverName: string,
+  setLoading: Dispatch<SetStateAction<boolean>>
+): useRoverPhotosReturn => {
   const [date, setDate] = useState<dayjs.Dayjs | null>(dayjs());
 
   const [photos, setPhotos] = useState([]);
@@ -32,12 +36,16 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
       });
 
       setPhotos(data.photos);
+      setLoading(false);
     };
 
+    setLoading(true);
     if (date?.isValid()) {
       getPhotos();
+    } else {
+      setLoading(false);
     }
-  }, [date, roverName]);
+  }, [date, roverName, setLoading]);
 
   return {
     date,
@@ -47,27 +55,39 @@ const useRoverPhotos = (roverName: string): useRoverPhotosReturn => {
 };
 
 export default function RoverDetail({ roverName }: RoverDetailProps) {
-  const { date, photos, setDate } = useRoverPhotos(roverName ?? "");
+  const [loading, setLoading] = useState(true);
+  const { date, photos, setDate } = useRoverPhotos(roverName ?? "", setLoading);
   return (
-    <main className="flex h-full w-full flex-col justify-between pb-32 overflow-y-scroll bg-gray-100 text-red-900">
-      <div className="flex justify-between w-full p-8 h-24">
+    <main className="flex h-full w-full flex-col justify-between pb-36 bg-gray-100 text-red-900">
+      <div className="flex justify-between w-full p-8 h-28 bg-gray-100">
         <h1 className="font-bold text-2xl pr-8">{roverName}</h1>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
             label="Date of Photos"
+            disableFuture
             value={date}
+            slotProps={{
+              textField: {
+                //@ts-expect-error readonly does exist and does what I want.
+                readOnly: true,
+              },
+            }}
             onAccept={(newValue) => {
-              console.log({ newValue, isValid: newValue?.isValid() });
               setDate(newValue);
             }}
           />
         </LocalizationProvider>
       </div>
-      {!photos.length && (
+      {loading && (
+        <div className="flex flex-grow justify-around">
+          <MoonLoader />
+        </div>
+      )}
+      {!photos.length && !loading && (
         <div className="flex justify-around">No Photos for this date</div>
       )}
-      {photos.length && (
-        <div className="grid grid-cols-3 gap-x-4 gap-y-8 content-center">
+      {photos.length && !loading && (
+        <div className="grid lg:grid-cols-4 md:grid-cols-3 grid-cols-2 gap-x-4 gap-y-8 p-4 place-items-center overflow-y-scroll">
           {photos.map((photo) => (
             // eslint-disable-next-line @next/next/no-img-element
             <img key={photo.id} alt={`image ${photo.id}`} src={photo.img_src} />
