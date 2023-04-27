@@ -1,5 +1,6 @@
 import { NextPageContext } from "next";
 import axios from "axios";
+import Image from "next/image";
 import { Photo, Rover } from "@/src/components/types/rover";
 import { RoverCard } from "@/src/components/RoverCard";
 
@@ -71,7 +72,11 @@ export default function RoverDetail({ roverName }: RoverDetailProps) {
       </div>
       <div className="grid grid-cols-3 gap-x-4 gap-y-8">
         {photos.map((photo) => (
-          <img key={photo.id} alt={`image ${photo.sol}`} src={photo.img_src} />
+          <Image
+            key={photo.id}
+            alt={`image ${photo.sol}`}
+            src={photo.img_src}
+          />
         ))}
       </div>
     </main>

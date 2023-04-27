@@ -1,12 +1,8 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
 import { NextPageContext } from "next";
 import axios from "axios";
 import { Rover } from "@/src/components/types/rover";
 import { RoverCard } from "@/src/components/RoverCard";
 import { DEMO_KEY, MARS_BASE_URI } from "@/src/components/constants";
-
-const inter = Inter({ subsets: ["latin"] });
 
 type HomeProps = {
   rovers: Rover[];
@@ -14,10 +10,8 @@ type HomeProps = {
 
 export default function Home({ rovers }: HomeProps) {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 bg-white text-black ${inter.className}`}
-    >
-      <ul className="grid grid-cols-3 gap-x-2 gap-y-8 w-full p-8">
+    <main className="flex h-full flex-col justify-between px-24 py-8 bg-gray-100 text-black">
+      <ul className="grid lg:grid-cols-3 md:grid-cols-2 grid-cols-1 gap-x-4 gap-y-8 w-full p-8">
         {rovers.map((rover) => (
           <RoverCard key={rover.id} {...rover} />
         ))}
@@ -34,13 +28,9 @@ export async function getServerSideProps(context: NextPageContext): Promise<{
   props: HomeProps;
 }> {
   try {
-    console.log("in getserversideprops", { MARS_BASE_URI });
-    const { data } = await axios.get<RoverResponse>(
-      "https://api.nasa.gov/mars-photos/api/v1/rovers/",
-      {
-        params: { api_key: DEMO_KEY },
-      }
-    );
+    const { data } = await axios.get<RoverResponse>(MARS_BASE_URI, {
+      params: { api_key: DEMO_KEY },
+    });
 
     return {
       props: {
